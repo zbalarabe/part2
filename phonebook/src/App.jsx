@@ -3,7 +3,13 @@ import { useEffect } from 'react'
 import axios from 'axios'
 import phonebookService from './services/phonebook'
 
-
+const Notification = ({ message }) => {
+  return (
+    <div className="feedback">
+      {message}
+    </div>
+  )
+}
 const Persons = ({ person, removeContact }) => {
   return (
     <p>
@@ -49,6 +55,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [typing, setTyping] = useState('')
+  const [notify, setNotify] = useState(null)
 
   useEffect(() => {
     console.log('effect')
@@ -68,12 +75,23 @@ const App = () => {
 
     console.log('deleted', deletedContact)
 
-    axios
-    .delete(url, deletedContact)
-    .then(response => {
+    if (window.confirm(`Are you sure you want to delete ${deletedContact.name}`)) {
+      axios
+      .delete(url, deletedContact)
+      .then(response => {
       setPersons(persons.map(person => person.id !== id ? person : response.data))
+      
+      setNotify(
+        `Contact '${deletedContact.name}' is deleted`
+      )
+      setTimeout(() => {
+        setNotify(null)
+      }, 10000)
+
     })
-    // .then(window.confirm('Are you sure you want to delete contact'))
+    }
+      setNewName('')
+      setNewNumber('')
 
   }
 
@@ -99,7 +117,13 @@ const App = () => {
     console.log('Check', check, (check.includes(newName)))
 
       if (check.includes(newName) === true) {
-        alert(`${newName} is already added to phonebook`)
+        if (confirm(`${newName} is already added to phonebook, replace old number with a new one?`)) {
+          // axios
+          // .put(`http://localhost:3001/persons/${id}`, contactObject)
+          // .then(response => response.data)
+        }
+
+
       } else {
       phonebookService
       .AddNew(contactObject)
@@ -108,6 +132,13 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
+
+        setNotify(
+          `Contact '${contactObject.name}' has been added`
+        )
+        setTimeout(() => {
+          setNotify(null)
+        }, 10000)
       }
       // console.log('Persons Array', persons)
       // setNewName('')
@@ -115,18 +146,6 @@ const App = () => {
     }
   
 
-  //   for (let i = 0; i < persons.length; i++) {
-  //   if (hasValue(persons[i], newName) === true) {
-  //     alert(`${newName} is already added to phonebook`)
-  //   } else {
-  //   setPersons(persons.concat(contactObject))}
-  //   console.log('Persons Array', persons)
-  //   }
-  //   setNewName('')
-  //   setNewNumber('')
-  // }
-
-  // console.log(persons)
   const handleNameChange = (event) => {
     console.log(event.target.value)
     setNewName(event.target.value)
@@ -152,6 +171,8 @@ const App = () => {
   
   return (
     <div>
+      <Notification message={notify} />
+
       <h2>Phonebook</h2>
       <Filter value={typing} handleChange={handleSearchChange} />
       
