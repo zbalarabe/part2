@@ -77,9 +77,9 @@ const App = () => {
 
     if (window.confirm(`Are you sure you want to delete ${deletedContact.name}`)) {
       axios
-      .delete(url, deletedContact)
+      .delete(url)
       .then(response => {
-      setPersons(persons.map(person => person.id !== id ? person : response.data))
+      setPersons(persons.filter(person => person.id !== id))
       
       setNotify(
         `Contact '${deletedContact.name}' is deleted`
