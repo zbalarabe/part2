@@ -69,7 +69,7 @@ const App = () => {
   
   const  deleteContact = (id) => {
     console.log(`Contact with ${id} needs to be deleted`)
-    const url = `http://localhost:3001/persons/${id}`
+    const url = `http://localhost:3004/api/persons/${id}`
     const contact = contactsToShow.find(c => c.id === id)
     const deletedContact = { ...contact}
 
