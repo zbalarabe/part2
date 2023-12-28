@@ -69,15 +69,15 @@ const App = () => {
   
   const  deleteContact = (id) => {
     console.log(`Contact with ${id} needs to be deleted`)
-    const url = `http://localhost:3004/api/persons/${id}`
+
     const contact = contactsToShow.find(c => c.id === id)
     const deletedContact = { ...contact}
 
     console.log('deleted', deletedContact)
 
     if (window.confirm(`Are you sure you want to delete ${deletedContact.name}`)) {
-      axios
-      .delete(url)
+      phonebookService
+      .deleteContact(id)
       .then(response => {
       setPersons(persons.filter(person => person.id !== id))
       
